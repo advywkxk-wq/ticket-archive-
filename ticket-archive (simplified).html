@@ -1,0 +1,1550 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>封存一场记忆｜SNH48 GROUP 剧场公演电子票夹</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Simplified Chinese Serif & Sans + Monospace Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Noto+Sans+SC:wght@300;400;500;700&family=Noto+Serif+SC:wght@500;700;900&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            serif: ['"Noto Serif SC"', 'serif'],
+            sans: ['"Noto Sans SC"', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
+          },
+          colors: {
+            theater: {
+              bg: '#12060a',
+              velvet: '#1e0a11',
+              mahogany: '#2b0f18',
+              card: '#240c14',
+              gold: '#d4af37',
+              goldLight: '#f4dc8c',
+              goldDim: '#8c6f23',
+              cream: '#f9f3e6',
+              parchment: '#efe4cf',
+            },
+            group: {
+              snh: '#5bc2e7',
+              gnz: '#9fbf40',
+              bej: '#e6007e',
+              ckg: '#c88a4b',
+              cgt: '#d92b2b',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    :root {
+      --gold: #d4af37;
+      --gold-light: #f4dc8c;
+      --velvet-dark: #12060a;
+    }
+
+    body {
+      background-color: #12060a;
+      color: #f9f3e6;
+      font-family: 'Noto Sans SC', sans-serif;
+      overflow-x: hidden;
+      min-height: 100vh;
+    }
+
+    /* Stage Velvet & Spotlight Background */
+    .theater-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      background:
+        radial-gradient(ellipse 65% 45% at 50% -5%, rgba(244, 220, 140, 0.16) 0%, rgba(212, 175, 55, 0.05) 45%, transparent 75%),
+        radial-gradient(circle at 15% 20%, rgba(120, 20, 48, 0.28) 0%, transparent 50%),
+        radial-gradient(circle at 85% 25%, rgba(120, 20, 48, 0.25) 0%, transparent 50%),
+        repeating-linear-gradient(
+          90deg,
+          rgba(255, 255, 255, 0.012) 0px,
+          rgba(255, 255, 255, 0.012) 2px,
+          rgba(0, 0, 0, 0.18) 2px,
+          rgba(0, 0, 0, 0.18) 14px
+        ),
+        linear-gradient(180deg, #1a070d 0%, #12060a 55%, #0c0306 100%);
+    }
+
+    /* Stage Light Beams */
+    .stage-beams {
+      position: fixed;
+      top: -10%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 140vw;
+      height: 75vh;
+      pointer-events: none;
+      z-index: -1;
+      background:
+        conic-gradient(from 155deg at 30% 0%, transparent 0deg, rgba(244, 220, 140, 0.045) 15deg, transparent 32deg),
+        conic-gradient(from 175deg at 70% 0%, transparent 0deg, rgba(244, 220, 140, 0.045) 15deg, transparent 32deg);
+      filter: blur(8px);
+    }
+
+    /* Realistic Theater Ticket Stub Styling */
+    .ticket-stub {
+      position: relative;
+      background: linear-gradient(145deg, #fbf6ec 0%, #f1e5ce 100%);
+      color: #241518;
+      border-radius: 14px;
+      box-shadow:
+        0 14px 30px -10px rgba(0, 0, 0, 0.75),
+        0 0 0 1px rgba(212, 175, 55, 0.45),
+        inset 0 1px 0 rgba(255, 255, 255, 0.9);
+      transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.3s ease;
+    }
+
+    .ticket-stub:hover {
+      transform: translateY(-4px);
+      box-shadow:
+        0 20px 38px -10px rgba(0, 0, 0, 0.85),
+        0 0 18px rgba(212, 175, 55, 0.32),
+        0 0 0 1px rgba(244, 220, 140, 0.8);
+    }
+
+    /* Perforated Tear Line & Semi-circular Notches */
+    .ticket-perforation {
+      position: relative;
+      border-top: 2px dashed rgba(90, 58, 65, 0.28);
+    }
+
+    .ticket-perforation::before,
+    .ticket-perforation::after {
+      content: '';
+      position: absolute;
+      top: -10px;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background-color: #19080e;
+      box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.8);
+      z-index: 5;
+    }
+
+    .ticket-perforation::before {
+      left: -22px;
+    }
+
+    .ticket-perforation::after {
+      right: -22px;
+    }
+
+    /* Modal ticket notch color matching dark modal backdrop */
+    .modal-ticket .ticket-perforation::before,
+    .modal-ticket .ticket-perforation::after {
+      background-color: #1b0910;
+    }
+
+    /* Gold Foil Text Effect */
+    .gold-foil {
+      background: linear-gradient(135deg, #d4af37 0%, #fff0b3 45%, #c59b27 70%, #f5dc82 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 0 2px 14px rgba(212, 175, 55, 0.25);
+    }
+
+    /* Cover Flow / Push-Pull Album Carousel */
+    .coverflow-stage {
+      perspective: 1400px;
+      touch-action: pan-y;
+      user-select: none;
+    }
+
+    .coverflow-card {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transition: transform 0.52s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.45s ease, filter 0.45s ease;
+      transform-style: preserve-3d;
+      will-change: transform, opacity;
+    }
+
+    /* Custom Scrollbar for Group Columns */
+    .velvet-scroll::-webkit-scrollbar {
+      width: 5px;
+      height: 5px;
+    }
+    .velvet-scroll::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.03);
+      border-radius: 999px;
+    }
+    .velvet-scroll::-webkit-scrollbar-thumb {
+      background: rgba(212, 175, 55, 0.35);
+      border-radius: 999px;
+    }
+    .velvet-scroll::-webkit-scrollbar-thumb:hover {
+      background: rgba(212, 175, 55, 0.65);
+    }
+
+    /* Barcode CSS pattern */
+    .barcode-bars {
+      height: 24px;
+      background-image: repeating-linear-gradient(
+        90deg,
+        #2b1a1e 0px, #2b1a1e 2px,
+        transparent 2px, transparent 4px,
+        #2b1a1e 4px, #2b1a1e 5px,
+        transparent 5px, transparent 8px,
+        #2b1a1e 8px, #2b1a1e 11px,
+        transparent 11px, transparent 13px,
+        #2b1a1e 13px, #2b1a1e 14px,
+        transparent 14px, transparent 17px
+      );
+      opacity: 0.78;
+    }
+  </style>
+</head>
+<body class="antialiased selection:bg-amber-400/30 selection:text-amber-100">
+
+  <!-- Theatrical Velvet & Spotlight Background -->
+  <div class="theater-backdrop"></div>
+  <div class="stage-beams"></div>
+
+  <!-- Decorative Vintage Stage Microphone SVG Watermark -->
+  <div class="fixed bottom-4 right-4 pointer-events-none opacity-[0.07] z-0 hidden sm:block">
+    <svg width="240" height="240" viewBox="0 0 240 240" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect x="88" y="24" width="64" height="104" rx="32" stroke="#f4dc8c" stroke-width="5"/>
+      <line x1="88" y1="54" x2="152" y2="54" stroke="#f4dc8c" stroke-width="3"/>
+      <line x1="88" y1="76" x2="152" y2="76" stroke="#f4dc8c" stroke-width="3"/>
+      <line x1="88" y1="98" x2="152" y2="98" stroke="#f4dc8c" stroke-width="3"/>
+      <path d="M68 88C68 116.719 91.2812 140 120 140C148.719 140 172 116.719 172 88" stroke="#f4dc8c" stroke-width="5" stroke-linecap="round"/>
+      <line x1="120" y1="140" x2="120" y2="205" stroke="#f4dc8c" stroke-width="6" stroke-linecap="round"/>
+      <path d="M84 205H156" stroke="#f4dc8c" stroke-width="7" stroke-linecap="round"/>
+      <circle cx="120" cy="76" r="105" stroke="#f4dc8c" stroke-width="1.5" stroke-dasharray="6 8"/>
+    </svg>
+  </div>
+
+  <!-- Toast Notification Banner -->
+  <div id="toast" class="fixed top-5 left-1/2 -translate-x-1/2 z-50 pointer-events-none opacity-0 transition-all duration-300 transform -translate-y-3">
+    <div class="px-5 py-2.5 rounded-full bg-theater-mahogany/95 border border-theater-gold/60 text-theater-cream text-sm shadow-2xl flex items-center gap-2 backdrop-blur-md">
+      <span class="w-2 h-2 rounded-full bg-theater-gold animate-pulse"></span>
+      <span id="toast-msg">已封存至电子票夹</span>
+    </div>
+  </div>
+
+  <!-- Main Wrapper -->
+  <div class="relative z-10 max-w-[1540px] mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-20">
+
+    <!-- Header Section -->
+    <header class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5 pb-6 border-b border-theater-gold/25">
+      <div class="flex items-start sm:items-center gap-4">
+        <!-- Stage Spotlight & Microphone Emblem -->
+        <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-amber-500/20 via-rose-950 to-black border border-theater-gold/50 flex items-center justify-center shadow-lg shadow-amber-950/40 shrink-0">
+          <svg class="w-8 h-8 text-theater-goldLight" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7">
+            <rect x="9" y="2" width="6" height="11" rx="3"/>
+            <path d="M5 10a7 7 0 0 0 14 0"/>
+            <line x1="12" y1="17" x2="12" y2="22"/>
+            <line x1="8" y1="22" x2="16" y2="22"/>
+            <line x1="9" y1="6" x2="15" y2="6" stroke-opacity="0.6"/>
+            <line x1="9" y1="9" x2="15" y2="9" stroke-opacity="0.6"/>
+          </svg>
+        </div>
+        <div>
+          <div class="flex items-center gap-2.5 flex-wrap">
+            <h1 class="font-serif text-2xl sm:text-4xl font-bold tracking-wider gold-foil">封存一场记忆</h1>
+            <span class="px-2.5 py-0.5 text-[11px] font-mono tracking-widest uppercase rounded-full bg-theater-gold/15 border border-theater-gold/40 text-theater-goldLight">
+              THEATER ARCHIVE
+            </span>
+          </div>
+          <p class="text-xs sm:text-sm text-amber-100/70 mt-1 tracking-wide">
+            SNH48 GROUP 剧场公演・演唱会・特别舞台专属电子票夹
+          </p>
+        </div>
+      </div>
+
+      <!-- Action Controls: View Switcher + Add Ticket -->
+      <div class="flex flex-wrap items-center gap-3">
+        <!-- View Switcher Pill -->
+        <div class="inline-flex p-1 rounded-2xl bg-black/50 border border-theater-gold/30 backdrop-blur-md">
+          <button id="btn-view-grid" onclick="switchView('grid')"
+            class="px-3.5 py-2 rounded-xl text-xs sm:text-sm font-medium transition-all flex items-center gap-1.5 bg-gradient-to-r from-amber-500/30 to-amber-600/20 text-theater-goldLight border border-theater-gold/50 shadow-sm">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <rect x="3" y="3" width="7" height="18" rx="1.5"/><rect x="14" y="3" width="7" height="18" rx="1.5"/>
+            </svg>
+            五团分栏票夹
+          </button>
+          <button id="btn-view-carousel" onclick="switchView('carousel')"
+            class="px-3.5 py-2 rounded-xl text-xs sm:text-sm font-medium transition-all flex items-center gap-1.5 text-amber-100/70 hover:text-white">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <rect x="6" y="4" width="12" height="16" rx="2"/><path d="M2 7v10M22 7v10"/>
+            </svg>
+            推拉专辑滑动
+          </button>
+        </div>
+
+        <!-- Add / Scan Ticket Button -->
+        <button onclick="openAddModal()"
+          class="px-4 py-2.5 rounded-2xl bg-gradient-to-r from-[#d4af37] via-[#e8c75a] to-[#c69c2b] text-[#1c0a0f] font-bold text-xs sm:text-sm shadow-lg shadow-amber-500/20 hover:brightness-110 active:scale-[0.98] transition-all flex items-center gap-2">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
+          </svg>
+          封存 / 扫描新票根
+        </button>
+      </div>
+    </header>
+
+    <!-- Filter & Stats Bar (Year / Month / Stats) -->
+    <section class="mt-5 p-4 rounded-2xl bg-theater-velvet/80 border border-theater-gold/25 backdrop-blur-md shadow-xl">
+      <div class="flex flex-col xl:flex-row xl:items-center justify-between gap-4">
+
+        <!-- Year & Month Filters -->
+        <div class="flex flex-col sm:flex-row sm:items-center gap-3 flex-wrap">
+          <!-- Year Filter -->
+          <div class="flex items-center gap-2">
+            <span class="text-xs font-serif text-theater-goldLight/90 tracking-wider shrink-0 flex items-center gap-1">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+              年份：
+            </span>
+            <div id="year-filters" class="flex items-center gap-1.5 flex-wrap"></div>
+          </div>
+
+          <div class="hidden sm:block h-5 w-[1px] bg-theater-gold/20 mx-1"></div>
+
+          <!-- Month Filter -->
+          <div class="flex items-center gap-2">
+            <span class="text-xs font-serif text-theater-goldLight/90 tracking-wider shrink-0">月份：</span>
+            <div class="relative">
+              <select id="month-select" onchange="setMonthFilter(this.value)"
+                class="appearance-none bg-black/50 border border-theater-gold/35 text-theater-cream text-xs sm:text-sm rounded-xl pl-3.5 pr-8 py-1.5 focus:outline-none focus:border-theater-gold cursor-pointer">
+                <option value="ALL">全年月份 (1–12月)</option>
+                <option value="01">01月 · 一月</option>
+                <option value="02">02月 · 二月</option>
+                <option value="03">03月 · 三月</option>
+                <option value="04">04月 · 四月</option>
+                <option value="05">05月 · 五月</option>
+                <option value="06">06月 · 六月</option>
+                <option value="07">07月 · 七月</option>
+                <option value="08">08月 · 八月</option>
+                <option value="09">09月 · 九月</option>
+                <option value="10">10月 · 十月</option>
+                <option value="11">11月 · 十一月</option>
+                <option value="12">12月 · 十二月</option>
+              </select>
+              <svg class="w-3.5 h-3.5 text-theater-gold pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/>
+              </svg>
+            </div>
+          </div>
+
+          <!-- Reset Filter Button -->
+          <button id="btn-reset-filters" onclick="resetFilters()" class="hidden text-xs text-amber-300/80 hover:text-amber-200 underline underline-offset-4 px-1">
+            清除筛选
+          </button>
+        </div>
+
+        <!-- Collection Summary Stats -->
+        <div class="flex items-center justify-between sm:justify-end gap-4 text-xs border-t xl:border-t-0 pt-3 xl:pt-0 border-theater-gold/15">
+          <div class="flex items-center gap-4">
+            <div>
+              <span class="text-amber-100/50">已封存票根</span>
+              <span id="stat-total" class="ml-1.5 font-mono text-base font-bold text-theater-goldLight">0</span>
+              <span class="text-amber-100/50 ml-0.5">张</span>
+            </div>
+            <div class="h-4 w-[1px] bg-theater-gold/20"></div>
+            <div>
+              <span class="text-amber-100/50">解锁剧场/场馆</span>
+              <span id="stat-venues" class="ml-1.5 font-mono text-base font-bold text-theater-goldLight">0</span>
+              <span class="text-amber-100/50 ml-0.5">座</span>
+            </div>
+          </div>
+          <button onclick="restoreSampleData()" title="恢复默认示例票根"
+            class="text-[11px] text-amber-100/40 hover:text-amber-200/80 transition-colors px-2 py-1 rounded-lg hover:bg-white/5">
+            重置示例
+          </button>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ========================================================= -->
+    <!-- VIEW 1: 5-GROUP COLUMN / GRID TICKET HOLDER               -->
+    <!-- ========================================================= -->
+    <main id="view-grid" class="mt-6">
+      <div id="groups-grid-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 items-start">
+        <!-- 5 Group Columns injected via JS -->
+      </div>
+    </main>
+
+    <!-- ========================================================= -->
+    <!-- VIEW 2: PUSH-PULL ALBUM COVER-FLOW SLIDER MODE            -->
+    <!-- ========================================================= -->
+    <section id="view-carousel" class="hidden mt-6">
+      <!-- Group Sub-Filter Pills inside Carousel Mode -->
+      <div class="flex flex-wrap items-center justify-center gap-2 mb-4">
+        <button onclick="setCarouselGroupFilter('ALL')" data-cgroup="ALL"
+          class="cgroup-pill px-3.5 py-1.5 rounded-full text-xs font-medium border transition-all bg-theater-gold/25 border-theater-gold text-theater-goldLight">
+          全部五团 (ALL)
+        </button>
+        <button onclick="setCarouselGroupFilter('SNH48')" data-cgroup="SNH48"
+          class="cgroup-pill px-3.5 py-1.5 rounded-full text-xs font-medium border transition-all bg-black/40 border-white/15 text-amber-100/75 hover:border-group-snh">
+          <span class="inline-block w-2 h-2 rounded-full bg-group-snh mr-1.5"></span>SNH48 上海
+        </button>
+        <button onclick="setCarouselGroupFilter('GNZ48')" data-cgroup="GNZ48"
+          class="cgroup-pill px-3.5 py-1.5 rounded-full text-xs font-medium border transition-all bg-black/40 border-white/15 text-amber-100/75 hover:border-group-gnz">
+          <span class="inline-block w-2 h-2 rounded-full bg-group-gnz mr-1.5"></span>GNZ48 广州
+        </button>
+        <button onclick="setCarouselGroupFilter('BEJ48')" data-cgroup="BEJ48"
+          class="cgroup-pill px-3.5 py-1.5 rounded-full text-xs font-medium border transition-all bg-black/40 border-white/15 text-amber-100/75 hover:border-group-bej">
+          <span class="inline-block w-2 h-2 rounded-full bg-group-bej mr-1.5"></span>BEJ48 北京
+        </button>
+        <button onclick="setCarouselGroupFilter('CKG48')" data-cgroup="CKG48"
+          class="cgroup-pill px-3.5 py-1.5 rounded-full text-xs font-medium border transition-all bg-black/40 border-white/15 text-amber-100/75 hover:border-group-ckg">
+          <span class="inline-block w-2 h-2 rounded-full bg-group-ckg mr-1.5"></span>CKG48 重庆
+        </button>
+        <button onclick="setCarouselGroupFilter('CGT48')" data-cgroup="CGT48"
+          class="cgroup-pill px-3.5 py-1.5 rounded-full text-xs font-medium border transition-all bg-black/40 border-white/15 text-amber-100/75 hover:border-group-cgt">
+          <span class="inline-block w-2 h-2 rounded-full bg-group-cgt mr-1.5"></span>CGT48 成都
+        </button>
+      </div>
+
+      <!-- 3D Album Sleeve / Cover-Flow Stage -->
+      <div class="relative rounded-3xl bg-gradient-to-b from-theater-velvet/90 via-black/70 to-theater-velvet/90 border border-theater-gold/30 shadow-2xl overflow-hidden py-6 px-2 sm:px-6">
+        <!-- Top Stage Spotlight Glow -->
+        <div class="absolute top-0 left-1/2 -translate-x-1/2 w-80 h-40 bg-amber-300/15 blur-3xl pointer-events-none"></div>
+
+        <!-- Hint Text -->
+        <div class="text-center text-xs text-amber-100/55 mb-2 flex items-center justify-center gap-2">
+          <span>← 左右滑动、拖曳专辑票卡或使用方向键翻阅 →</span>
+        </div>
+
+        <!-- Interactive 3D Cover-Flow Track -->
+        <div id="coverflow-stage" class="coverflow-stage relative w-full h-[460px] sm:h-[490px] flex items-center justify-center cursor-grab active:cursor-grabbing">
+          <!-- Cards rendered dynamically -->
+        </div>
+
+        <!-- Carousel Bottom Controls & Active Quote Preview -->
+        <div class="relative z-20 max-w-2xl mx-auto mt-2 flex flex-col items-center gap-4">
+          <!-- Navigation Bar -->
+          <div class="flex items-center gap-4">
+            <button onclick="stepCarousel(-1)" aria-label="上一张票根"
+              class="w-11 h-11 rounded-full bg-black/60 border border-theater-gold/40 text-theater-goldLight hover:bg-theater-gold/20 active:scale-95 transition flex items-center justify-center shadow-lg">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
+            </button>
+
+            <div class="px-4 py-1.5 rounded-full bg-black/60 border border-theater-gold/30 font-mono text-xs sm:text-sm text-theater-goldLight">
+              <span id="carousel-counter">1 / 1</span>
+            </div>
+
+            <button onclick="stepCarousel(1)" aria-label="下一张票根"
+              class="w-11 h-11 rounded-full bg-black/60 border border-theater-gold/40 text-theater-goldLight hover:bg-theater-gold/20 active:scale-95 transition flex items-center justify-center shadow-lg">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+            </button>
+          </div>
+
+          <!-- Active Ticket Quote Banner -->
+          <div id="carousel-active-quote" class="w-full text-center px-5 py-3.5 rounded-2xl bg-white/[0.04] border border-theater-gold/20 backdrop-blur-sm">
+            <p class="font-serif italic text-sm sm:text-base text-amber-100/90 leading-relaxed"></p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- ========================================================= -->
+  <!-- MODAL 1: TICKET DETAIL & EDITABLE MEMORY QUOTE            -->
+  <!-- ========================================================= -->
+  <div id="detail-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-3 sm:p-6 bg-black/80 backdrop-blur-md overflow-y-auto">
+    <div class="relative w-full max-w-3xl rounded-3xl bg-[#1b0910] border border-theater-gold/45 shadow-2xl overflow-hidden my-auto">
+      <!-- Modal Header -->
+      <div class="flex items-center justify-between px-6 py-4 border-b border-theater-gold/20 bg-black/30">
+        <div class="flex items-center gap-2.5">
+          <span id="detail-group-badge" class="px-2.5 py-0.5 rounded-md text-xs font-bold tracking-wider text-black">SNH48</span>
+          <h3 class="font-serif text-lg sm:text-xl font-bold text-theater-goldLight">剧场记忆封存档案</h3>
+        </div>
+        <button onclick="closeDetailModal()" class="w-9 h-9 rounded-full bg-white/5 hover:bg-white/15 flex items-center justify-center text-amber-100/80 transition">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+      <!-- Modal Content Grid -->
+      <div class="p-5 sm:p-7 grid grid-cols-1 md:grid-cols-12 gap-6 items-start">
+
+        <!-- Left: High-Res Realistic Ticket Stub Preview -->
+        <div class="md:col-span-5">
+          <div id="detail-ticket-render" class="modal-ticket"></div>
+        </div>
+
+        <!-- Right: Editable Memory Note & Theater Quote Selector -->
+        <div class="md:col-span-7 flex flex-col gap-4">
+          <div class="p-4 sm:p-5 rounded-2xl bg-black/40 border border-theater-gold/25">
+            <div class="flex items-center justify-between mb-2.5">
+              <label for="detail-quote-input" class="font-serif text-sm sm:text-base font-bold text-theater-goldLight flex items-center gap-2">
+                <svg class="w-4 h-4 text-theater-gold" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                </svg>
+                这场演出的独家记忆 / 感言
+              </label>
+              <span class="text-[11px] text-amber-100/45">可直接点击文字编辑</span>
+            </div>
+
+            <textarea id="detail-quote-input" rows="4"
+              placeholder="写下那天剧场的灯光、MC环节的笑声、或是推在舞台上闪闪发光的瞬间..."
+              class="w-full rounded-xl bg-[#13060a] border border-theater-gold/30 p-3.5 text-sm sm:text-base font-serif text-theater-cream leading-relaxed focus:outline-none focus:border-theater-gold transition resize-none"></textarea>
+
+            <!-- Theater Quote Inspiration Generator -->
+            <div class="mt-3 pt-3 border-t border-white/10">
+              <div class="flex items-center justify-between gap-2 mb-2">
+                <span class="text-xs text-amber-200/75">✨ 灵感语录库（点击填入或随机切换）：</span>
+                <button type="button" onclick="cyclePresetQuote()"
+                  class="text-xs px-2.5 py-1 rounded-lg bg-theater-gold/15 hover:bg-theater-gold/25 text-theater-goldLight border border-theater-gold/30 transition flex items-center gap-1">
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+                  换一句剧场语录
+                </button>
+              </div>
+              <p id="preset-quote-preview" onclick="applyPresetQuote()" title="点击套用这句话"
+                class="cursor-pointer text-xs text-amber-100/70 hover:text-amber-100 bg-white/[0.03] hover:bg-white/[0.07] p-2.5 rounded-xl border border-white/10 transition italic">
+                「只要剧场的幕布还会拉开，我们就永远有重逢的理由。」
+              </p>
+            </div>
+          </div>
+
+          <!-- Save & Delete Actions -->
+          <div class="flex items-center justify-between gap-3 pt-1">
+            <button type="button" onclick="deleteCurrentTicket()"
+              class="px-3.5 py-2.5 rounded-xl text-xs text-rose-300/80 hover:text-rose-200 hover:bg-rose-950/60 border border-rose-500/25 transition flex items-center gap-1.5">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+              移除此票根
+            </button>
+
+            <button type="button" onclick="saveTicketQuote()"
+              class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-[#d4af37] to-[#e5c158] text-[#1a080d] font-bold text-xs sm:text-sm shadow-lg hover:brightness-110 active:scale-95 transition flex items-center gap-1.5">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+              保存记忆文字
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================= -->
+  <!-- MODAL 2: ADD / SCAN NEW TICKET STUB                       -->
+  <!-- ========================================================= -->
+  <div id="add-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-3 sm:p-6 bg-black/80 backdrop-blur-md overflow-y-auto">
+    <div class="relative w-full max-w-2xl rounded-3xl bg-[#1b0910] border border-theater-gold/45 shadow-2xl overflow-hidden my-auto">
+      <!-- Header -->
+      <div class="flex items-center justify-between px-6 py-4 border-b border-theater-gold/20 bg-black/30">
+        <div>
+          <h3 class="font-serif text-lg sm:text-xl font-bold text-theater-goldLight">封存一张新票根</h3>
+          <p class="text-xs text-amber-100/60">支持扫描/上传实体票根照片，或手动输入公演与演唱会信息</p>
+        </div>
+        <button onclick="closeAddModal()" class="w-9 h-9 rounded-full bg-white/5 hover:bg-white/15 flex items-center justify-center text-amber-100/80 transition">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+      <!-- Form -->
+      <form id="add-ticket-form" onsubmit="handleAddTicketSubmit(event)" class="p-5 sm:p-6 space-y-4 max-h-[82vh] overflow-y-auto velvet-scroll">
+
+        <!-- Step 1: Scan / Upload Physical Stub -->
+        <div class="p-4 rounded-2xl bg-black/40 border border-dashed border-theater-gold/45 hover:border-theater-gold transition">
+          <div class="flex flex-col sm:flex-row items-center gap-4">
+            <div id="scan-preview-box" class="w-full sm:w-36 h-24 rounded-xl bg-theater-velvet border border-white/10 flex flex-col items-center justify-center overflow-hidden shrink-0 relative">
+              <svg class="w-7 h-7 text-theater-gold/70 mb-1" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/>
+                <circle cx="12" cy="13" r="3"/>
+              </svg>
+              <span class="text-[10px] text-amber-100/50">票根扫描预览</span>
+            </div>
+
+            <div class="flex-1 text-center sm:text-left">
+              <p class="text-sm font-medium text-theater-goldLight">📷 扫描 / 上传实体票根（选填）</p>
+              <p class="text-xs text-amber-100/60 mt-0.5 mb-2.5">可直接使用手机相机拍摄纸质票根，或从相册导入票根照片封存到票夹上。</p>
+              <div class="flex flex-wrap items-center justify-center sm:justify-start gap-2">
+                <label class="cursor-pointer px-3.5 py-1.5 rounded-xl bg-theater-gold/20 hover:bg-theater-gold/30 border border-theater-gold/50 text-xs font-medium text-theater-goldLight transition">
+                  选择照片 / 开启相机扫描
+                  <input type="file" id="ticket-image-input" accept="image/*" class="hidden" onchange="handleImageUpload(event)" />
+                </label>
+                <button type="button" id="btn-clear-image" onclick="clearUploadedImage()" class="hidden text-xs text-rose-300 hover:underline">
+                  清除照片
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 2: Group & Team Selection -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+          <div>
+            <label class="block text-xs text-amber-100/75 mb-1">所属分团 *</label>
+            <select id="input-group" onchange="onGroupSelectChange()" required
+              class="w-full rounded-xl bg-black/50 border border-theater-gold/35 px-3.5 py-2.5 text-sm text-theater-cream focus:outline-none focus:border-theater-gold">
+              <option value="SNH48">SNH48（上海 · 星梦剧院）</option>
+              <option value="GNZ48">GNZ48（广州 · 中泰国际广场）</option>
+              <option value="BEJ48">BEJ48（北京 · 壹空间）</option>
+              <option value="CKG48">CKG48（重庆 · 喜盈门）</option>
+              <option value="CGT48">CGT48（成都 · 东郊记忆）</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-xs text-amber-100/75 mb-1">队伍 / 专场类型 *</label>
+            <input type="text" id="input-team" required placeholder="例如：Team SII / Team G / 联合公演 / 总选演唱会"
+              value="Team SII"
+              class="w-full rounded-xl bg-black/50 border border-theater-gold/35 px-3.5 py-2.5 text-sm text-theater-cream focus:outline-none focus:border-theater-gold" />
+          </div>
+        </div>
+
+        <!-- Show Title & Venue -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+          <div>
+            <label class="block text-xs text-amber-100/75 mb-1">公演 / 演唱会名称 *</label>
+            <input type="text" id="input-title" required placeholder="例如：《幻镜》《Victoria.G》《彼岸花开》"
+              class="w-full rounded-xl bg-black/50 border border-theater-gold/35 px-3.5 py-2.5 text-sm text-theater-cream focus:outline-none focus:border-theater-gold" />
+          </div>
+
+          <div>
+            <label class="block text-xs text-amber-100/75 mb-1">演出场馆 *</label>
+            <input type="text" id="input-venue" required value="上海星梦剧院"
+              class="w-full rounded-xl bg-black/50 border border-theater-gold/35 px-3.5 py-2.5 text-sm text-theater-cream focus:outline-none focus:border-theater-gold" />
+          </div>
+        </div>
+
+        <!-- Date, Time, Seat & Ticket Tier -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          <div class="col-span-2 sm:col-span-1">
+            <label class="block text-xs text-amber-100/75 mb-1">演出日期 *</label>
+            <input type="date" id="input-date" required
+              class="w-full rounded-xl bg-black/50 border border-theater-gold/35 px-3 py-2.5 text-xs sm:text-sm text-theater-cream focus:outline-none focus:border-theater-gold" />
+          </div>
+
+          <div>
+            <label class="block text-xs text-amber-100/75 mb-1">开演时间</label>
+            <input type="time" id="input-time" value="19:30"
+              class="w-full rounded-xl bg-black/50 border border-theater-gold/35 px-3 py-2.5 text-xs sm:text-sm text-theater-cream focus:outline-none focus:border-theater-gold" />
+          </div>
+
+          <div>
+            <label class="block text-xs text-amber-100/75 mb-1">票种</label>
+            <select id="input-tier"
+              class="w-full rounded-xl bg-black/50 border border-theater-gold/35 px-3 py-2.5 text-xs sm:text-sm text-theater-cream focus:outline-none focus:border-theater-gold">
+              <option value="普通站票">普通站票</option>
+              <option value="普通坐票">普通坐票</option>
+              <option value="VIP坐票" selected>VIP坐票</option>
+              <option value="SVIP坐票">SVIP坐票</option>
+              <option value="超级VIP坐票">超级VIP坐票</option>
+              <option value="VIP摄影">VIP摄影</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-xs text-amber-100/75 mb-1">座位号 *</label>
+            <input type="text" id="input-seat" required placeholder="例如：3排 08座"
+              class="w-full rounded-xl bg-black/50 border border-theater-gold/35 px-3 py-2.5 text-xs sm:text-sm text-theater-cream focus:outline-none focus:border-theater-gold" />
+          </div>
+        </div>
+
+        <!-- Initial Memory Quote -->
+        <div>
+          <div class="flex items-center justify-between mb-1">
+            <label class="text-xs text-amber-100/75">封存记忆语录（可留白，系统将自动附上一句剧场诗句）</label>
+            <button type="button" onclick="fillRandomQuoteInAddForm()" class="text-[11px] text-theater-goldLight hover:underline">
+              ✨ 随机填入一句剧场语录
+            </button>
+          </div>
+          <textarea id="input-quote" rows="2" placeholder="记录这场演出的心情、推的表现或特别的安可曲..."
+            class="w-full rounded-xl bg-black/50 border border-theater-gold/35 p-3 text-sm font-serif text-theater-cream focus:outline-none focus:border-theater-gold resize-none"></textarea>
+        </div>
+
+        <!-- Submit Footer -->
+        <div class="flex items-center justify-end gap-3 pt-2 border-t border-theater-gold/20">
+          <button type="button" onclick="closeAddModal()"
+            class="px-4 py-2.5 rounded-xl text-xs sm:text-sm text-amber-100/70 hover:text-white hover:bg-white/5 transition">
+            取消
+          </button>
+          <button type="submit"
+            class="px-6 py-2.5 rounded-xl bg-gradient-to-r from-[#d4af37] to-[#e7c45a] text-[#1a080d] font-bold text-xs sm:text-sm shadow-lg hover:brightness-110 active:scale-95 transition">
+            确认封存票根
+          </button>
+        </div>
+
+      </form>
+    </div>
+  </div>
+
+  <!-- Application Script -->
+  <script>
+    // =========================================================================
+    // 1. CONFIGURATION & CURATED THEATER QUOTES
+    // =========================================================================
+    const STORAGE_KEY = 'snh48_theater_tickets_cn_v1';
+
+    const GROUP_META = {
+      SNH48: {
+        name: 'SNH48',
+        city: '上海 · SHANGHAI',
+        theater: '上海星梦剧院',
+        color: '#5bc2e7',
+        badgeText: '#07222e',
+        borderClass: 'border-[#5bc2e7]/40',
+        glowStyle: 'box-shadow: 0 0 24px rgba(91, 194, 231, 0.14);'
+      },
+      GNZ48: {
+        name: 'GNZ48',
+        city: '广州 · GUANGZHOU',
+        theater: '广州中泰星梦剧院',
+        color: '#9fbf40',
+        badgeText: '#162104',
+        borderClass: 'border-[#9fbf40]/40',
+        glowStyle: 'box-shadow: 0 0 24px rgba(159, 191, 64, 0.14);'
+      },
+      BEJ48: {
+        name: 'BEJ48',
+        city: '北京 · BEIJING',
+        theater: '北京壹空间',
+        color: '#e6007e',
+        badgeText: '#ffffff',
+        borderClass: 'border-[#e6007e]/40',
+        glowStyle: 'box-shadow: 0 0 24px rgba(230, 0, 126, 0.14);'
+      },
+      CKG48: {
+        name: 'CKG48',
+        city: '重庆 · CHONGQING',
+        theater: '重庆喜盈门',
+        color: '#c88a4b',
+        badgeText: '#1f1205',
+        borderClass: 'border-[#c88a4b]/40',
+        glowStyle: 'box-shadow: 0 0 24px rgba(200, 138, 75, 0.14);'
+      },
+      CGT48: {
+        name: 'CGT48',
+        city: '成都 · CHENGDU',
+        theater: '成都东郊记忆星梦剧院',
+        color: '#d92b2b',
+        badgeText: '#ffffff',
+        borderClass: 'border-[#d92b2b]/40',
+        glowStyle: 'box-shadow: 0 0 24px rgba(217, 43, 43, 0.14);'
+      }
+    };
+
+    const CURATED_QUOTES = [
+      "「只要剧场的幕布还会拉开，我们就永远有重逢的理由。」",
+      "「聚光灯落下的那一刻，舞台上的汗水与星光都成了永恒。」",
+      "「这张小小的票根，封存了那天晚风、应援棒的颜色与心跳。」",
+      "「在几百人的小剧场里，每一次对视都是只属于彼此的奇迹。」",
+      "「安可声响起时，时间仿佛停留在最炙热的青春里。」",
+      "「从嘉兴路到全国各地的舞台，谢谢你一直闪闪发光。」",
+      "「也许记忆会随时间褪色，但票根上的日期永远记得那份感动。」",
+      "「当全场荧光海亮起，所有的奔赴都有了最温柔的答案。」"
+    ];
+
+    // Pre-loaded Sample Collection across all 5 sister groups & multiple years/months
+    const SAMPLE_TICKETS = [
+      {
+        id: 't-snh-01',
+        group: 'SNH48',
+        team: 'Team SII',
+        title: '《幻镜》B版剧场公演',
+        venue: '上海星梦剧院',
+        date: '2026-08-15',
+        time: '19:30',
+        tier: '超级VIP坐票',
+        seat: '1排 07座',
+        serial: 'SNH-20260815-0107',
+        quote: '夏夜嘉兴路的晚风很温柔，《幻镜》开场灯光亮起的瞬间，所有的疲惫都被治愈了。',
+        image: ''
+      },
+      {
+        id: 't-snh-02',
+        group: 'SNH48',
+        team: 'SNH48 GROUP 年度总决选',
+        title: '新的序章 · 年度青春盛典演唱会',
+        venue: '上海梅赛德斯-奔驰文化中心',
+        date: '2025-08-02',
+        time: '17:30',
+        tier: 'SVIP坐票',
+        seat: 'A2区 2排 12座',
+        serial: 'SNH-20250802-A202',
+        quote: '万人体育馆里的荧光海太震撼了，大合唱响起的时候真的忍不住眼眶湿润。',
+        image: ''
+      },
+      {
+        id: 't-gnz-01',
+        group: 'GNZ48',
+        team: 'Team G',
+        title: '《Victoria.G》特别公演',
+        venue: '广州中泰星梦剧院',
+        date: '2026-05-03',
+        time: '19:00',
+        tier: 'VIP摄影',
+        seat: '摄影区 04位',
+        serial: 'GNZ-20260503-CAM04',
+        quote: '中泰剧场的氛围永远那么热烈！快门按个不停，每个舞台瞬间都值得珍藏。',
+        image: ''
+      },
+      {
+        id: 't-gnz-02',
+        group: 'GNZ48',
+        team: 'Team NIII',
+        title: '《彼岸花开》主题公演',
+        venue: '广州中泰星梦剧院',
+        date: '2025-11-22',
+        time: '19:30',
+        tier: '普通坐票',
+        seat: '6排 04座',
+        serial: 'GNZ-20251122-0604',
+        quote: '「只要剧场的幕布还会拉开，我们就永远有重逢的理由。」',
+        image: ''
+      },
+      {
+        id: 't-bej-01',
+        group: 'BEJ48',
+        team: 'Team B',
+        title: '《双面偶像：又又》经典公演',
+        venue: '北京壹空间',
+        date: '2026-03-21',
+        time: '19:00',
+        tier: 'VIP坐票',
+        seat: '2排 09座',
+        serial: 'BEJ-20260321-0209',
+        quote: '前排的视角太近了！每个表情和舞步细节都看得清清楚楚，是非常珍贵的一晚。',
+        image: ''
+      },
+      {
+        id: 't-bej-02',
+        group: 'BEJ48',
+        team: 'Team E',
+        title: '《羽化成蝶》周年特别场',
+        venue: '北京壹空间',
+        date: '2024-10-19',
+        time: '19:30',
+        tier: '普通站票',
+        seat: '站区 B-18',
+        serial: 'BEJ-20241019-SB18',
+        quote: '即使站满全场也完全不觉得累，Call声喊到沙哑却无比快乐！',
+        image: ''
+      },
+      {
+        id: 't-ckg-01',
+        group: 'CKG48',
+        team: 'Team C',
+        title: '《命运的X号》山城巡演特别场',
+        venue: '重庆喜盈门',
+        date: '2026-06-14',
+        time: '19:30',
+        tier: 'SVIP坐票',
+        seat: '1排 05座',
+        serial: 'CKG-20260614-0105',
+        quote: '山城的夜晚与剧场的热情完美融合，安可连唱三首直接把气氛推到最高点！',
+        image: ''
+      },
+      {
+        id: 't-cgt-01',
+        group: 'CGT48',
+        team: 'Team CII',
+        title: '《梦想的旗帜》蓉城星光公演',
+        venue: '成都东郊记忆星梦剧院',
+        date: '2026-09-12',
+        time: '19:00',
+        tier: 'VIP摄影',
+        seat: '摄影区 02位',
+        serial: 'CGT-20260912-CAM02',
+        quote: '东郊记忆的工业风与剧场红幕布相映成趣，生诞祭读信环节让人超级感动。',
+        image: ''
+      }
+    ];
+
+    // =========================================================================
+    // 2. APPLICATION STATE
+    // =========================================================================
+    let tickets = [];
+    let currentView = 'grid'; // 'grid' | 'carousel'
+    let selectedYear = 'ALL';
+    let selectedMonth = 'ALL';
+    let carouselGroupFilter = 'ALL';
+    let carouselIndex = 0;
+    let activeDetailTicketId = null;
+    let presetQuoteIndex = 0;
+    let uploadedImageDataUrl = '';
+
+    // =========================================================================
+    // 3. INITIALIZATION & STORAGE
+    // =========================================================================
+    function initApp() {
+      try {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          tickets = Array.isArray(parsed) && parsed.length > 0 ? parsed : [...SAMPLE_TICKETS];
+        } else {
+          tickets = [...SAMPLE_TICKETS];
+          saveTicketsToStorage();
+        }
+      } catch (e) {
+        tickets = [...SAMPLE_TICKETS];
+      }
+
+      // Set default date in add modal to today
+      const todayStr = new Date().toISOString().split('T')[0];
+      document.getElementById('input-date').value = todayStr;
+
+      setupCarouselInteractions();
+      renderAll();
+    }
+
+    function saveTicketsToStorage() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(tickets));
+      } catch (e) {
+        showToast('存储空间已满，建议压缩上传图片后再试');
+      }
+    }
+
+    function restoreSampleData() {
+      tickets = [...SAMPLE_TICKETS];
+      saveTicketsToStorage();
+      selectedYear = 'ALL';
+      selectedMonth = 'ALL';
+      carouselGroupFilter = 'ALL';
+      carouselIndex = 0;
+      document.getElementById('month-select').value = 'ALL';
+      renderAll();
+      showToast('已恢复默认五团示例票根');
+    }
+
+    function showToast(message) {
+      const toast = document.getElementById('toast');
+      const msgEl = document.getElementById('toast-msg');
+      msgEl.textContent = message;
+      toast.classList.remove('opacity-0', '-translate-y-3');
+      toast.classList.add('opacity-100', 'translate-y-0');
+      clearTimeout(window.__toastTimer);
+      window.__toastTimer = setTimeout(() => {
+        toast.classList.add('opacity-0', '-translate-y-3');
+        toast.classList.remove('opacity-100', 'translate-y-0');
+      }, 2600);
+    }
+
+    // =========================================================================
+    // 4. FILTERING & STATS
+    // =========================================================================
+    function getFilteredTickets() {
+      return tickets
+        .filter(t => {
+          const [year, month] = (t.date || '').split('-');
+          if (selectedYear !== 'ALL' && year !== selectedYear) return false;
+          if (selectedMonth !== 'ALL' && month !== selectedMonth) return false;
+          return true;
+        })
+        .sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+    }
+
+    function setYearFilter(year) {
+      selectedYear = year;
+      carouselIndex = 0;
+      renderAll();
+    }
+
+    function setMonthFilter(month) {
+      selectedMonth = month;
+      carouselIndex = 0;
+      renderAll();
+    }
+
+    function resetFilters() {
+      selectedYear = 'ALL';
+      selectedMonth = 'ALL';
+      carouselGroupFilter = 'ALL';
+      carouselIndex = 0;
+      document.getElementById('month-select').value = 'ALL';
+      renderAll();
+    }
+
+    function renderYearFilters() {
+      const container = document.getElementById('year-filters');
+      const yearsSet = new Set(tickets.map(t => (t.date || '').split('-')[0]).filter(Boolean));
+      const years = ['ALL', ...Array.from(yearsSet).sort((a, b) => b.localeCompare(a))];
+
+      container.innerHTML = years.map(yr => {
+        const active = selectedYear === yr;
+        const label = yr === 'ALL' ? '全部年份' : `${yr}年`;
+        return `
+          <button onclick="setYearFilter('${yr}')"
+            class="px-3 py-1 rounded-xl text-xs font-mono transition-all ${
+              active
+                ? 'bg-theater-gold text-[#19070c] font-bold shadow-sm'
+                : 'bg-black/45 text-amber-100/70 border border-theater-gold/25 hover:border-theater-gold/60 hover:text-white'
+            }">
+            ${label}
+          </button>
+        `;
+      }).join('');
+
+      const resetBtn = document.getElementById('btn-reset-filters');
+      if (selectedYear !== 'ALL' || selectedMonth !== 'ALL') {
+        resetBtn.classList.remove('hidden');
+      } else {
+        resetBtn.classList.add('hidden');
+      }
+    }
+
+    function updateStats(filteredList) {
+      document.getElementById('stat-total').textContent = filteredList.length;
+      const uniqueVenues = new Set(filteredList.map(t => t.venue).filter(Boolean));
+      document.getElementById('stat-venues').textContent = uniqueVenues.size;
+    }
+
+    // =========================================================================
+    // 5. TICKET STUB HTML GENERATOR
+    // =========================================================================
+    function getTierBadgeStyle(tier) {
+      const t = tier || '普通坐票';
+      if (t.includes('超级VIP')) {
+        return 'background: linear-gradient(135deg, #2a0a14 0%, #5c192d 100%); color: #f4dc8c; border: 1px solid #d4af37; font-weight: 700; box-shadow: 0 1px 4px rgba(212,175,55,0.28);';
+      }
+      if (t.includes('SVIP')) {
+        return 'background: linear-gradient(135deg, #d4af37 0%, #f3d678 100%); color: #1f0d11; border: 1px solid #b58d1e; font-weight: 700;';
+      }
+      if (t.includes('VIP摄影')) {
+        return 'background: #241318; color: #f5d77f; border: 1px solid rgba(212, 175, 55, 0.65); font-weight: 600;';
+      }
+      if (t.includes('VIP')) {
+        return 'background: rgba(212, 175, 55, 0.22); color: #5c3d08; border: 1px solid rgba(181, 141, 30, 0.55); font-weight: 700;';
+      }
+      return 'background: rgba(43, 21, 26, 0.1); color: #4a262e; border: 1px solid transparent; font-weight: 500;';
+    }
+
+    function buildTicketHTML(ticket, isDetail = false) {
+      const meta = GROUP_META[ticket.group] || GROUP_META.SNH48;
+      const [y, m, d] = (ticket.date || '2026-01-01').split('-');
+      const shortQuote = ticket.quote || CURATED_QUOTES[0];
+      const tierLabel = ticket.tier || '普通坐票';
+      const tierStyle = getTierBadgeStyle(tierLabel);
+
+      return `
+        <article ${isDetail ? '' : `onclick="openDetailModal('${ticket.id}')"`}
+          class="ticket-stub ${isDetail ? '' : 'cursor-pointer'} overflow-hidden select-none">
+          <!-- Top Group Color Ribbon -->
+          <div class="h-2.5 w-full" style="background: linear-gradient(90deg, ${meta.color}, #d4af37);"></div>
+
+          <!-- Upper Ticket Body -->
+          <div class="p-3.5 sm:p-4">
+            <!-- Group Badge + Tier + Date -->
+            <div class="flex items-center justify-between gap-2 mb-2">
+              <div class="flex items-center gap-1.5 flex-wrap">
+                <span class="px-2 py-0.5 rounded text-[11px] font-mono font-bold tracking-wider shadow-sm"
+                  style="background-color: ${meta.color}; color: ${meta.badgeText};">
+                  ${meta.name}
+                </span>
+                <span class="px-2 py-0.5 rounded text-[10px] tracking-wide" style="${tierStyle}">
+                  ${escapeHtml(tierLabel)}
+                </span>
+              </div>
+              <span class="font-mono text-xs font-bold text-[#6e3b45] shrink-0">
+                ${y}.${m}.${d}
+              </span>
+            </div>
+
+            <!-- Team & Show Title -->
+            <p class="text-[11px] font-semibold tracking-wide text-[#7c4d56] uppercase truncate">
+              ${escapeHtml(ticket.team)}
+            </p>
+            <h4 class="font-serif text-base sm:text-lg font-bold text-[#1f0d11] leading-snug mt-0.5 line-clamp-2">
+              ${escapeHtml(ticket.title)}
+            </h4>
+
+            <!-- Scanned Physical Ticket Photo Thumbnail (if uploaded) -->
+            ${ticket.image ? `
+              <div class="mt-2.5 rounded-lg overflow-hidden border border-[#8c6f23]/40 bg-black/10 relative group">
+                <img src="${ticket.image}" alt="实体票根扫描" class="w-full ${isDetail ? 'max-h-48' : 'h-24'} object-cover" />
+                <span class="absolute bottom-1.5 right-1.5 px-1.5 py-0.5 rounded bg-black/70 text-[9px] text-amber-200 font-mono">
+                  SCANNED STUB
+                </span>
+              </div>
+            ` : ''}
+
+            <!-- Venue & Seat Metadata Grid -->
+            <div class="mt-3 pt-2.5 border-t border-[#5a3a41]/15 grid grid-cols-2 gap-2 text-xs">
+              <div>
+                <span class="block text-[10px] text-[#8a656c]">演出剧场 / 场馆</span>
+                <span class="font-medium text-[#291418] truncate block">${escapeHtml(ticket.venue)}</span>
+              </div>
+              <div class="text-right">
+                <span class="block text-[10px] text-[#8a656c]">座位 / 开演</span>
+                <span class="font-mono font-bold text-[#8a2338] block truncate">${escapeHtml(ticket.seat)} · ${escapeHtml(ticket.time || '19:30')}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Perforated Tear Line with Semi-circular Side Cutouts -->
+          <div class="ticket-perforation mx-3"></div>
+
+          <!-- Lower Ticket Stub (Quote Preview + Barcode) -->
+          <div class="px-3.5 sm:px-4 pt-2.5 pb-3 bg-[#e9dac0]/65">
+            <p class="font-serif italic text-[11px] sm:text-xs text-[#4b2c33] line-clamp-2 leading-relaxed">
+              ${escapeHtml(shortQuote)}
+            </p>
+            <div class="mt-2.5 flex items-center justify-between gap-3">
+              <div class="barcode-bars flex-1"></div>
+              <span class="font-mono text-[9px] text-[#6d4c53] tracking-tighter shrink-0">
+                ${escapeHtml(ticket.serial || 'THEATER-PASS')}
+              </span>
+            </div>
+          </div>
+        </article>
+      `;
+    }
+
+    // =========================================================================
+    // 6. VIEW 1: 5-GROUP COLUMN / GRID RENDERING
+    // =========================================================================
+    function renderFiveGroupGrid(filteredList) {
+      const container = document.getElementById('groups-grid-container');
+      const groupKeys = ['SNH48', 'GNZ48', 'BEJ48', 'CKG48', 'CGT48'];
+
+      container.innerHTML = groupKeys.map(key => {
+        const meta = GROUP_META[key];
+        const groupTickets = filteredList.filter(t => t.group === key);
+
+        return `
+          <section class="rounded-3xl bg-theater-velvet/85 border ${meta.borderClass} backdrop-blur-md flex flex-col overflow-hidden" style="${meta.glowStyle}">
+            <!-- Group Column Header -->
+            <div class="p-4 border-b border-white/10 bg-gradient-to-b from-white/[0.05] to-transparent">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <span class="w-3 h-3 rounded-full shadow-sm" style="background-color: ${meta.color}; box-shadow: 0 0 10px ${meta.color};"></span>
+                  <h2 class="font-mono text-lg font-bold tracking-wider text-white">${meta.name}</h2>
+                </div>
+                <span class="px-2.5 py-0.5 rounded-full text-xs font-mono font-bold bg-black/50 border border-white/15 text-theater-goldLight">
+                  ${groupTickets.length} 张
+                </span>
+              </div>
+              <p class="text-[11px] text-amber-100/55 mt-1 font-mono tracking-wider">${meta.city}</p>
+            </div>
+
+            <!-- Ticket Stack inside Column -->
+            <div class="p-3.5 space-y-4 max-h-[680px] overflow-y-auto velvet-scroll">
+              ${groupTickets.length > 0
+                ? groupTickets.map(t => buildTicketHTML(t, false)).join('')
+                : `
+                  <div class="py-12 px-4 text-center rounded-2xl border border-dashed border-white/10 bg-black/20">
+                    <p class="font-serif text-sm text-amber-100/45 mb-2">此时段暂无 ${meta.name} 票根</p>
+                    <button onclick="openAddModalWithGroup('${key}')"
+                      class="text-xs px-3 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 text-theater-goldLight border border-theater-gold/30 transition">
+                      + 封存 ${meta.name} 票根
+                    </button>
+                  </div>
+                `
+              }
+            </div>
+          </section>
+        `;
+      }).join('');
+    }
+
+    // =========================================================================
+    // 7. VIEW 2: PUSH-PULL ALBUM COVER-FLOW CAROUSEL RENDERING
+    // =========================================================================
+    function getCarouselTickets(filteredList) {
+      if (carouselGroupFilter === 'ALL') return filteredList;
+      return filteredList.filter(t => t.group === carouselGroupFilter);
+    }
+
+    function setCarouselGroupFilter(groupKey) {
+      carouselGroupFilter = groupKey;
+      carouselIndex = 0;
+
+      // Update pill styles
+      document.querySelectorAll('.cgroup-pill').forEach(btn => {
+        const isMatch = btn.getAttribute('data-cgroup') === groupKey;
+        if (isMatch) {
+          btn.classList.add('bg-theater-gold/25', 'border-theater-gold', 'text-theater-goldLight');
+          btn.classList.remove('bg-black/40', 'border-white/15', 'text-amber-100/75');
+        } else {
+          btn.classList.remove('bg-theater-gold/25', 'border-theater-gold', 'text-theater-goldLight');
+          btn.classList.add('bg-black/40', 'border-white/15', 'text-amber-100/75');
+        }
+      });
+
+      renderCarousel();
+    }
+
+    function stepCarousel(delta) {
+      const list = getCarouselTickets(getFilteredTickets());
+      if (list.length === 0) return;
+      carouselIndex = (carouselIndex + delta + list.length) % list.length;
+      renderCarousel();
+    }
+
+    function selectCarouselCard(index) {
+      const list = getCarouselTickets(getFilteredTickets());
+      if (index === carouselIndex && list[index]) {
+        // Clicking the center active album opens its memory detail modal
+        openDetailModal(list[index].id);
+      } else {
+        carouselIndex = index;
+        renderCarousel();
+      }
+    }
+
+    function renderCarousel() {
+      const stage = document.getElementById('coverflow-stage');
+      const counterEl = document.getElementById('carousel-counter');
+      const quoteBox = document.querySelector('#carousel-active-quote p');
+
+      const list = getCarouselTickets(getFilteredTickets());
+
+      if (list.length === 0) {
+        stage.innerHTML = `
+          <div class="text-center p-8 rounded-2xl border border-dashed border-theater-gold/30 bg-black/40">
+            <p class="font-serif text-base text-amber-100/70 mb-3">当前筛选条件下没有可翻阅的票根专辑</p>
+            <button onclick="resetFilters()" class="px-4 py-2 rounded-xl bg-theater-gold text-[#1a080d] text-xs font-bold">
+              显示全部票根
+            </button>
+          </div>
+        `;
+        counterEl.textContent = '0 / 0';
+        quoteBox.textContent = '「期待下一场剧场相见，为你封存新的星光。」';
+        return;
+      }
+
+      if (carouselIndex >= list.length) carouselIndex = 0;
+
+      const isMobile = window.innerWidth < 640;
+      const xSpread = isMobile ? 125 : 225;
+
+      stage.innerHTML = list.map((ticket, idx) => {
+        const offset = idx - carouselIndex;
+        const absOffset = Math.abs(offset);
+
+        // Hide cards far away for crisp performance
+        if (absOffset > 3) return '';
+
+        const translateX = offset * xSpread;
+        const translateZ = -absOffset * 130;
+        const rotateY = offset === 0 ? 0 : (offset > 0 ? -28 : 28);
+        const scale = offset === 0 ? 1.03 : Math.max(0.72, 1 - absOffset * 0.12);
+        const opacity = offset === 0 ? 1 : Math.max(0.32, 1 - absOffset * 0.28);
+        const zIndex = 30 - absOffset;
+
+        return `
+          <div onclick="selectCarouselCard(${idx})"
+            class="coverflow-card w-[285px] sm:w-[330px]"
+            style="
+              transform: translate(-50%, -50%) translateX(${translateX}px) translateZ(${translateZ}px) rotateY(${rotateY}deg) scale(${scale});
+              opacity: ${opacity};
+              z-index: ${zIndex};
+              filter: ${offset === 0 ? 'brightness(1.03)' : 'brightness(0.75)'};
+            ">
+            ${buildTicketHTML(ticket, true)}
+            ${offset === 0 ? `
+              <div class="mt-2.5 text-center">
+                <span class="inline-block px-3 py-0.5 rounded-full bg-theater-gold/20 border border-theater-gold/40 text-[11px] text-theater-goldLight">
+                  点击票卡查看 / 编辑记忆笔记
+                </span>
+              </div>
+            ` : ''}
+          </div>
+        `;
+      }).join('');
+
+      counterEl.textContent = `${carouselIndex + 1} / ${list.length}`;
+      const activeTicket = list[carouselIndex];
+      quoteBox.textContent = activeTicket.quote || CURATED_QUOTES[0];
+    }
+
+    // Touch & Mouse Drag-to-Slide Support for Push-Pull Album Carousel
+    function setupCarouselInteractions() {
+      const stage = document.getElementById('coverflow-stage');
+      let startX = 0;
+      let isDragging = false;
+
+      stage.addEventListener('pointerdown', (e) => {
+        startX = e.clientX;
+        isDragging = true;
+      });
+
+      stage.addEventListener('pointerup', (e) => {
+        if (!isDragging) return;
+        isDragging = false;
+        const diffX = e.clientX - startX;
+        if (Math.abs(diffX) > 42) {
+          if (diffX < 0) stepCarousel(1);
+          else stepCarousel(-1);
+        }
+      });
+
+      stage.addEventListener('pointercancel', () => {
+        isDragging = false;
+      });
+
+      // Keyboard Left/Right Navigation
+      window.addEventListener('keydown', (e) => {
+        const detailOpen = !document.getElementById('detail-modal').classList.contains('hidden');
+        const addOpen = !document.getElementById('add-modal').classList.contains('hidden');
+        if (detailOpen || addOpen || currentView !== 'carousel') return;
+
+        if (e.key === 'ArrowLeft') stepCarousel(-1);
+        if (e.key === 'ArrowRight') stepCarousel(1);
+      });
+
+      window.addEventListener('resize', () => {
+        if (currentView === 'carousel') renderCarousel();
+      });
+    }
+
+    // =========================================================================
+    // 8. VIEW SWITCHING & MAIN RENDER
+    // =========================================================================
+    function switchView(view) {
+      currentView = view;
+      const gridEl = document.getElementById('view-grid');
+      const carouselEl = document.getElementById('view-carousel');
+      const btnGrid = document.getElementById('btn-view-grid');
+      const btnCarousel = document.getElementById('btn-view-carousel');
+
+      if (view === 'grid') {
+        gridEl.classList.remove('hidden');
+        carouselEl.classList.add('hidden');
+        btnGrid.className = 'px-3.5 py-2 rounded-xl text-xs sm:text-sm font-medium transition-all flex items-center gap-1.5 bg-gradient-to-r from-amber-500/30 to-amber-600/20 text-theater-goldLight border border-theater-gold/50 shadow-sm';
+        btnCarousel.className = 'px-3.5 py-2 rounded-xl text-xs sm:text-sm font-medium transition-all flex items-center gap-1.5 text-amber-100/70 hover:text-white';
+      } else {
+        gridEl.classList.add('hidden');
+        carouselEl.classList.remove('hidden');
+        btnCarousel.className = 'px-3.5 py-2 rounded-xl text-xs sm:text-sm font-medium transition-all flex items-center gap-1.5 bg-gradient-to-r from-amber-500/30 to-amber-600/20 text-theater-goldLight border border-theater-gold/50 shadow-sm';
+        btnGrid.className = 'px-3.5 py-2 rounded-xl text-xs sm:text-sm font-medium transition-all flex items-center gap-1.5 text-amber-100/70 hover:text-white';
+        renderCarousel();
+      }
+    }
+
+    function renderAll() {
+      renderYearFilters();
+      const filtered = getFilteredTickets();
+      updateStats(filtered);
+      renderFiveGroupGrid(filtered);
+      if (currentView === 'carousel') {
+        renderCarousel();
+      }
+    }
+
+    // =========================================================================
+    // 9. TICKET DETAIL & EDITABLE QUOTE MODAL
+    // =========================================================================
+    function openDetailModal(ticketId) {
+      const ticket = tickets.find(t => t.id === ticketId);
+      if (!ticket) return;
+
+      activeDetailTicketId = ticketId;
+      const meta = GROUP_META[ticket.group] || GROUP_META.SNH48;
+
+      const badge = document.getElementById('detail-group-badge');
+      badge.textContent = meta.name;
+      badge.style.backgroundColor = meta.color;
+      badge.style.color = meta.badgeText;
+
+      document.getElementById('detail-ticket-render').innerHTML = buildTicketHTML(ticket, true);
+      document.getElementById('detail-quote-input').value = ticket.quote || '';
+
+      const modal = document.getElementById('detail-modal');
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    }
+
+    function closeDetailModal() {
+      const modal = document.getElementById('detail-modal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+      activeDetailTicketId = null;
+    }
+
+    function cyclePresetQuote() {
+      presetQuoteIndex = (presetQuoteIndex + 1) % CURATED_QUOTES.length;
+      document.getElementById('preset-quote-preview').textContent = CURATED_QUOTES[presetQuoteIndex];
+    }
+
+    function applyPresetQuote() {
+      const chosen = CURATED_QUOTES[presetQuoteIndex];
+      document.getElementById('detail-quote-input').value = chosen;
+      showToast('已套用剧场语录，别忘了点击「保存记忆文字」');
+    }
+
+    function saveTicketQuote() {
+      if (!activeDetailTicketId) return;
+      const idx = tickets.findIndex(t => t.id === activeDetailTicketId);
+      if (idx === -1) return;
+
+      const updatedQuote = document.getElementById('detail-quote-input').value.trim();
+      tickets[idx].quote = updatedQuote || CURATED_QUOTES[0];
+      saveTicketsToStorage();
+
+      // Re-render ticket preview inside modal & main views
+      document.getElementById('detail-ticket-render').innerHTML = buildTicketHTML(tickets[idx], true);
+      renderAll();
+      showToast('已更新并封存这场演出的记忆文字 ✨');
+    }
+
+    function deleteCurrentTicket() {
+      if (!activeDetailTicketId) return;
+      tickets = tickets.filter(t => t.id !== activeDetailTicketId);
+      saveTicketsToStorage();
+      closeDetailModal();
+      renderAll();
+      showToast('已从票夹移除该票根');
+    }
+
+    // =========================================================================
+    // 10. ADD / SCAN NEW TICKET MODAL
+    // =========================================================================
+    function openAddModal() {
+      const modal = document.getElementById('add-modal');
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    }
+
+    function openAddModalWithGroup(groupKey) {
+      document.getElementById('input-group').value = groupKey;
+      onGroupSelectChange();
+      openAddModal();
+    }
+
+    function closeAddModal() {
+      const modal = document.getElementById('add-modal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+
+    function onGroupSelectChange() {
+      const groupKey = document.getElementById('input-group').value;
+      const meta = GROUP_META[groupKey];
+      if (meta) {
+        document.getElementById('input-venue').value = meta.theater;
+      }
+      const defaultTeams = {
+        SNH48: 'Team SII',
+        GNZ48: 'Team G',
+        BEJ48: 'Team B',
+        CKG48: 'Team C',
+        CGT48: 'Team CII'
+      };
+      document.getElementById('input-team').value = defaultTeams[groupKey] || '';
+    }
+
+    function fillRandomQuoteInAddForm() {
+      const randomQuote = CURATED_QUOTES[Math.floor(Math.random() * CURATED_QUOTES.length)];
+      document.getElementById('input-quote').value = randomQuote;
+    }
+
+    // Compress & preview scanned/uploaded ticket photo for reliable localStorage persistence
+    function handleImageUpload(event) {
+      const file = event.target.files && event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const img = new Image();
+        img.onload = function() {
+          const canvas = document.createElement('canvas');
+          const MAX_WIDTH = 720;
+          let width = img.width;
+          let height = img.height;
+
+          if (width > MAX_WIDTH) {
+            height = Math.round((height * MAX_WIDTH) / width);
+            width = MAX_WIDTH;
+          }
+
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, width, height);
+
+          uploadedImageDataUrl = canvas.toDataURL('image/jpeg', 0.78);
+
+          const previewBox = document.getElementById('scan-preview-box');
+          previewBox.innerHTML = `<img src="${uploadedImageDataUrl}" alt="扫描票根预览" class="w-full h-full object-cover" />`;
+          document.getElementById('btn-clear-image').classList.remove('hidden');
+          showToast('票根影像已读取完成');
+        };
+        img.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function clearUploadedImage() {
+      uploadedImageDataUrl = '';
+      document.getElementById('ticket-image-input').value = '';
+      document.getElementById('btn-clear-image').classList.add('hidden');
+      document.getElementById('scan-preview-box').innerHTML = `
+        <svg class="w-7 h-7 text-theater-gold/70 mb-1" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/>
+          <circle cx="12" cy="13" r="3"/>
+        </svg>
+        <span class="text-[10px] text-amber-100/50">票根扫描预览</span>
+      `;
+    }
+
+    function handleAddTicketSubmit(event) {
+      event.preventDefault();
+
+      const group = document.getElementById('input-group').value;
+      const team = document.getElementById('input-team').value.trim();
+      const title = document.getElementById('input-title').value.trim();
+      const venue = document.getElementById('input-venue').value.trim();
+      const date = document.getElementById('input-date').value;
+      const time = document.getElementById('input-time').value || '19:30';
+      const tier = document.getElementById('input-tier').value;
+      const seat = document.getElementById('input-seat').value.trim();
+      const rawQuote = document.getElementById('input-quote').value.trim();
+
+      const dateCompact = date.replace(/-/g, '');
+      const randCode = Math.floor(1000 + Math.random() * 9000);
+
+      const newTicket = {
+        id: 't-' + Date.now(),
+        group,
+        team,
+        title,
+        venue,
+        date,
+        time,
+        tier,
+        seat,
+        serial: `${group}-${dateCompact}-${randCode}`,
+        quote: rawQuote || CURATED_QUOTES[Math.floor(Math.random() * CURATED_QUOTES.length)],
+        image: uploadedImageDataUrl
+      };
+
+      tickets.unshift(newTicket);
+      saveTicketsToStorage();
+
+      // Reset form inputs
+      document.getElementById('input-title').value = '';
+      document.getElementById('input-seat').value = '';
+      document.getElementById('input-quote').value = '';
+      clearUploadedImage();
+
+      closeAddModal();
+      carouselIndex = 0;
+      renderAll();
+      showToast(`已成功封存 ${group}《${title}》票根！`);
+    }
+
+    // Security helper for user-entered strings
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    // Boot application on window load
+    window.addEventListener('DOMContentLoaded', initApp);
+  </script>
+</body>
+</html>
